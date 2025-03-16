@@ -1,10 +1,10 @@
 # SOC-Project
 # Homelab Cybersecurity SOC
 
-## 📌 Project Overview
+##  Project Overview
 This project is a **Security Operations Center (SOC) homelab** that simulates a monitored network environment with **intrusion detection, SIEM, attack simulation, and incident response**. It is designed to provide hands-on experience with cybersecurity tools and methodologies.
 
-## 🎯 Objectives
+##  Objectives
 - Set up a virtualized SOC environment using **VirtualBox**.
 - Implement a **Splunk SIEM** for log collection and analysis.
 - Deploy **Suricata** as an **Intrusion Detection System (IDS)**.
@@ -14,7 +14,7 @@ This project is a **Security Operations Center (SOC) homelab** that simulates a 
 
 ---
 
-## 🏗️ Lab Infrastructure
+##  Lab Infrastructure
 
 Each VM will have **two network interfaces**:
 1. **NAT (eth0)** → Provides Internet access.
@@ -29,7 +29,7 @@ Each VM will have **two network interfaces**:
 
 ---
 
-## 🖥️ Step-by-Step Setup
+##  Step-by-Step Setup
 
 ### 1️⃣ **Virtual Machine Configuration**
 - Install **VirtualBox** and create VMs.
@@ -65,7 +65,7 @@ Each VM will have **two network interfaces**:
 
 ---
 
-## 🔥 Tools Used
+##  Tools Used
 - **SIEM:** Splunk
 - **IDS/IPS:** Suricata
 - **DNS Server:** BIND9
@@ -74,7 +74,7 @@ Each VM will have **two network interfaces**:
 
 ---
 
-## 📝 Future Enhancements
+##  Future Enhancements
 - Automate attack detection with **Sigma rules**.
 - Implement **Wazuh** for endpoint monitoring.
 - Use **MITRE ATT&CK** framework for threat mapping.
@@ -82,11 +82,11 @@ Each VM will have **two network interfaces**:
 
 ---
 
-## 📚 Learning Outcomes
+##  Learning Outcomes
 - Gain hands-on experience with **security tools**.
 - Understand **SIEM, IDS, and monitoring concepts**.
 - Learn how to **simulate and respond to attacks**.
 - Build a **real-world cybersecurity homelab** for practice.
 
-🚀 **This project is a great step toward a cybersecurity career!** Feel free to contribute or suggest improvements!
+ **This project is a great step toward a cybersecurity career!** Feel free to contribute or suggest improvements!
 
