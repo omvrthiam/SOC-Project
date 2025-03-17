@@ -1,92 +1,154 @@
-# SOC-Project
-# Homelab Cybersecurity SOC
+# Homelab Cybersecurity Monitoring and Incident Response
 
-##  Project Overview
-This project is a **Security Operations Center (SOC) homelab** that simulates a monitored network environment with **intrusion detection, SIEM, attack simulation, and incident response**. It is designed to provide hands-on experience with cybersecurity tools and methodologies.
+## Overview
+This project aims to build a Security Operations Center (SOC) in a homelab environment using various open-source security tools. The goal is to monitor and analyze network traffic, detect threats, and simulate attacks for security testing.
 
-##  Objectives
-- Set up a virtualized SOC environment using **VirtualBox**.
-- Implement a **Splunk SIEM** for log collection and analysis.
-- Deploy **Suricata** as an **Intrusion Detection System (IDS)**.
-- Configure **BIND DNS** for internal domain resolution.
-- Perform **attack simulations** using a **Kali Linux VM**.
-- Develop an **incident response workflow**.
+## Infrastructure
+**Virtualization:** VirtualBox
 
----
+Each VM has two network interfaces:
+- **Internal Network (Host-Only):** Used for isolated communication between VMs.
+- **NAT Interface:** Used for internet access.
 
-##  Lab Infrastructure
+### **Network Configuration**
+Each VM is assigned a static IP and DNS configuration:
 
-Each VM will have **two network interfaces**:
-1. **NAT (eth0)** → Provides Internet access.
-2. **Host-Only Network (eth1)** → Internal SOC communication.
+#### **Security VM (Splunk + Suricata IDS/IPS)**
+- Internal IP: `192.168.56.100`
+- DNS Name: `splunk.soclab.oth`
 
-| VM Name        | Role                  | Internal IP       | Domain Name           |
-|---------------|----------------------|------------------|----------------------|
-| Security VM   | Splunk SIEM + IDS     | 192.168.56.100    | splunk.soclab.oth    |
-| Network VM    | BIND DNS + Syslog     | 192.168.56.50    | dns.soclab.oth       |
-| Web Server    | Simulated Target      | 192.168.56.150    | web.soclab.oth       |
-| Kali Linux    | Attack Simulation     | 192.168.56.200    | kali.soclab.oth      |
+#### **Network VM (BIND DNS + Syslog Server)**
+- Internal IP: `192.168.56.101`
+- DNS Name: `dns.soclab.oth`
 
----
+#### **Kali Linux (Attack Simulation)**
+- Internal IP: `192.168.56.102`
 
-##  Step-by-Step Setup
-
-### 1️⃣ **Virtual Machine Configuration**
-- Install **VirtualBox** and create VMs.
-- Configure **Network Interfaces**:
-  - NAT (Internet) → `eth0`
-  - Host-Only (Internal) → `eth1`
-- Set static IP addresses for each VM.
-
-### 2️⃣ **Install and Configure BIND DNS (Network VM)**
-- Install BIND9 (`sudo apt install bind9 -y`).
-- Configure **forward and reverse DNS zones** (`/etc/bind/named.conf.local`).
-- Set up **hostnames** for internal VMs.
-
-### 3️⃣ **Install and Configure Splunk SIEM (Security VM)**
-- Download Splunk `.deb` package.
-- Install Splunk (`dpkg -i splunk.deb`).
-- Enable and start the Splunk service.
-- Configure log forwarding from other VMs.
-
-### 4️⃣ **Deploy Suricata IDS (Security VM)**
-- Install Suricata (`sudo apt install suricata -y`).
-- Configure **Suricata** to monitor `eth1`.
-- Enable **alert rules** for attack detection.
-
-### 5️⃣ **Attack Simulation (Kali Linux VM)**
-- Perform **Nmap scans, brute-force attacks, and exploit attempts**.
-- Verify logs and alerts in **Splunk and Suricata**.
-
-### 6️⃣ **Incident Response**
-- Document attack detection results.
-- Develop a basic **incident response plan**.
-- Improve detection rules based on findings.
+#### **Web Server (Apache with Virtual Host)**
+- Internal IP: `192.168.56.103`
+- DNS Name: `web.soclab.oth`
 
 ---
+## **Configurations**
 
-##  Tools Used
-- **SIEM:** Splunk
-- **IDS/IPS:** Suricata
-- **DNS Server:** BIND9
-- **Attack Simulation:** Kali Linux
-- **Monitoring & Logging:** Syslog, Splunk Forwarders
+### **1️⃣ Static Network Configuration**
+Edit `/etc/network/interfaces`:
+```ini
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# Primary network interface (NAT - DHCP)
+auto eth0
+iface eth0 inet dhcp
+
+# Secondary network interface (Internal - Static)
+auto eth1
+iface eth1 inet static
+    address 192.168.56.X
+    netmask 255.255.255.0
+    gateway 192.168.56.1
+    dns-nameservers 192.168.56.101
+```
+Prevent **resolv.conf** from being overwritten:
+```bash
+sudo chattr +i /etc/resolv.conf
+```
 
 ---
+### **2️⃣ DNS Configuration (BIND9 on Network VM)**
+```bash
+sudo apt install bind9 -y
+```
+Edit `/etc/bind/named.conf.local`:
+```ini
+zone "soclab.oth" {
+    type master;
+    file "/etc/bind/db.soclab.oth";
+};
+```
+Create the zone file `/etc/bind/db.soclab.oth`:
+```ini
+$TTL 86400
+@   IN  SOA dns.soclab.oth. root.soclab.oth. (
+        2024031501  ; Serial
+        3600        ; Refresh
+        1800        ; Retry
+        604800      ; Expire
+        86400 )     ; Minimum TTL
 
-##  Future Enhancements
-- Automate attack detection with **Sigma rules**.
-- Implement **Wazuh** for endpoint monitoring.
-- Use **MITRE ATT&CK** framework for threat mapping.
-- Integrate **Grafana + Prometheus** for better visibility.
+    IN  NS  dns.soclab.oth.
+dns IN  A   192.168.56.101
+splunk IN  A   192.168.56.100
+web IN  A   192.168.56.103
+```
+Restart BIND:
+```bash
+sudo systemctl restart named
+```
 
 ---
+### **3️⃣ Install & Configure Splunk**
+To install splunk, first create an account in splunk website and ask for a enterprise trial which will be valid for 60 days. Splunk will give you a custom url
+```bash
+wget -O splunk.deb custom_url
+sudo dpkg -i splunk.deb
+sudo /opt/splunk/bin/splunk start --accept-license
+```
+Don't forget to replace custom_url with your actual url given by splunk.
 
-##  Learning Outcomes
-- Gain hands-on experience with **security tools**.
-- Understand **SIEM, IDS, and monitoring concepts**.
-- Learn how to **simulate and respond to attacks**.
-- Build a **real-world cybersecurity homelab** for practice.
+---
+### **4️⃣ Apache Reverse Proxy for Splunk**
+Install Apache:
+```bash
+sudo apt install apache2
+sudo a2enmod proxy proxy_http proxy_https ssl headers
+```
+Configure Virtual Host `/etc/apache2/sites-available/splunk.conf`:
+```ini
+<VirtualHost *:80>
+    ServerName splunk.soclab.oth
+    Redirect permanent / https://splunk.soclab.oth/
+</VirtualHost>
 
- **This project is a great step toward a cybersecurity career!** Feel free to contribute or suggest improvements!
+<VirtualHost *:443>
+    ServerName splunk.soclab.oth
+    SSLEngine on
+    SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt
+    SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key
+
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:8000/
+    ProxyPassReverse / http://localhost:8000/
+</VirtualHost>
+```
+Enable the site and restart Apache:
+```bash
+sudo a2ensite splunk.conf
+sudo systemctl restart apache2
+```
+Access Splunk: [https://splunk.soclab.oth:8000](https://splunk.soclab.oth:8000)
+
+---
+### **5️⃣ Install & Configure Suricata**
+```bash
+sudo apt install suricata -y
+```
+Configure Suricata `/etc/suricata/suricata.yaml` (set `eth1` as the monitored interface ==> internal network for the lab):
+```yaml
+af-packet:
+  interface: eth1
+```
+Enable IDS rules and restart Suricata:
+```bash
+sudo suricata-update
+sudo systemctl restart suricata
+```
+
+---
+## **Next Steps**
+✅ Configure log forwarding (Suricata logs → Splunk)
+✅ Set up attack simulation using Kali Linux
+✅ Visualize logs using Grafana
+✅ Document findings & incident response process
 
