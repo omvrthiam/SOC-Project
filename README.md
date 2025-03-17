@@ -22,10 +22,10 @@ Each VM will have **two network interfaces**:
 
 | VM Name        | Role                  | Internal IP       | Domain Name           |
 |---------------|----------------------|------------------|----------------------|
-| Security VM   | Splunk SIEM + IDS     | 192.168.56.20    | splunk.soclab.oth    |
-| Network VM    | BIND DNS + Syslog     | 192.168.56.10    | dns.soclab.oth       |
-| Web Server    | Simulated Target      | 192.168.56.30    | web.soclab.oth       |
-| Kali Linux    | Attack Simulation     | 192.168.56.40    | kali.soclab.oth      |
+| Security VM   | Splunk SIEM + IDS     | 192.168.56.100    | splunk.soclab.oth    |
+| Network VM    | BIND DNS + Syslog     | 192.168.56.50    | dns.soclab.oth       |
+| Web Server    | Simulated Target      | 192.168.56.150    | web.soclab.oth       |
+| Kali Linux    | Attack Simulation     | 192.168.56.200    | kali.soclab.oth      |
 
 ---
 
