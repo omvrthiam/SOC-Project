@@ -145,6 +145,67 @@ sudo suricata-update
 sudo systemctl restart suricata
 ```
 
+### Configuring Splunk to Ingest Suricata Logs
+1. Open the Splunk inputs configuration file:
+   ```bash
+   sudo nano /opt/splunk/etc/apps/search/local/inputs.conf
+   ```
+2. Add the following configuration to monitor Suricata logs:
+   ```ini
+   [monitor:///var/log/suricata/eve.json]
+   sourcetype = suricata
+   index = suricata
+   followTail = 1
+   disabled = false
+
+   [monitor:///var/log/suricata/eve.json - alert - dns - http - tls - ssh - flow - anomaly]
+   sourcetype = suricata
+   index = suricata
+   followTail = 1
+   disabled = false
+   ```
+3. Restart Splunk to apply changes:
+   ```bash
+   sudo systemctl restart splunk
+   ```
+
+### Verifying Suricata Logs in Splunk
+Run the following Splunk search query to check if logs are being ingested:
+```splunk
+index=suricata | stats count by source
+```
+![Suricata logs in Splunk](count_index.png)
+
+Now we can seach for events in the suricata index using
+
+```
+inex="suricata"
+``
+![Suricata logs in Splunk](splunk_suricata.png)
+
+## Next Steps
+Now that Splunk is ingesting logs successfully, the next steps are:
+- Creating dashboards in Splunk for better log analysis.
+- Configuring Suricata rules for detecting attacks.
+- Implementing alerting mechanisms in Splunk.
+
+Stay tuned for further updates!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ---
 ## **Next Steps**
 ✅ Configure log forwarding (Suricata logs → Splunk)
