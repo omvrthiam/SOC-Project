@@ -171,17 +171,20 @@ sudo systemctl restart suricata
 
 ### Verifying Suricata Logs in Splunk
 Run the following Splunk search query to check if logs are being ingested:
+
 ```splunk
 index=suricata | stats count by source
 ```
+
 ![Suricata logs in Splunk](count_index.png)
 
 Now we can seach for events in the suricata index using
 
+```splunk
+index="suricata"
 ```
-inex="suricata"
-``
-![Suricata logs in Splunk](splunk_suricata.png)
+
+![Suricata logs in Splunk](suricata_splunk.png)
 
 ## Next Steps
 Now that Splunk is ingesting logs successfully, the next steps are:
