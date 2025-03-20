@@ -127,7 +127,10 @@ Enable the site and restart Apache:
 sudo a2ensite splunk.conf
 sudo systemctl restart apache2
 ```
-Access Splunk: [https://splunk.soclab.oth](https://splunk.soclab.oth)
+Access Splunk: [https://splunk.soclab.oth](https://splunk.soclab.oth) and connect with the admin credentials created during the installation of Splunk
+
+![Suricata logs in Splunk](splunk_interface.png)
+
 
 ---
 ### **5️⃣ Install & Configure Suricata**
