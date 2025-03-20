@@ -160,12 +160,6 @@ sudo systemctl restart suricata
    index = suricata
    followTail = 1
    disabled = false
-
-   [monitor:///var/log/suricata/eve.json - alert - dns - http - tls - ssh - flow - anomaly]
-   sourcetype = suricata
-   index = suricata
-   followTail = 1
-   disabled = false
    ```
 3. Restart Splunk to apply changes:
    ```bash
