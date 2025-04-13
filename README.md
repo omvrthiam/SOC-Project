@@ -184,32 +184,8 @@ index="suricata"
 ![Suricata logs in Splunk](suricata_splunk.png)
 
 ## Next Steps
-Now that Splunk is ingesting logs successfully, the next steps are:
+Now that Splunk is ingesting logs successfully, the next steps for me will be:
 - Creating dashboards in Splunk for better log analysis.
 - Configuring Suricata rules for detecting attacks.
 - Implementing alerting mechanisms in Splunk.
-
-Stay tuned for further updates!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
----
-## **Next Steps**
-✅ Configure log forwarding (Suricata logs → Splunk)
-✅ Set up attack simulation using Kali Linux
-✅ Visualize logs using Grafana
-✅ Document findings & incident response process
 
